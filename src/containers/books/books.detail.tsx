@@ -3,17 +3,7 @@ import axios from 'axios';
 import { Box, Typography, Stack } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import CommonPage from '../../components/common-page/common-page';
-
-interface IBook {
-  id: number;
-  title: string;
-  author: string;
-  isbn: string;
-  published_year: string;
-  genre: string;
-  total_copies: number;
-  copies_available: number;
-}
+import { IBooks } from './books.types';
 
 interface IFileItem {
   url: string;
@@ -25,7 +15,7 @@ interface IFileItem {
 
 export default function BookDetail() {
   const params = useParams();
-  const [book, setBook] = useState<IBook>();
+  const [book, setBook] = useState<IBooks>();
   const [fileItem, setFileItem] = useState<IFileItem>();
 
   useEffect(() => {
@@ -45,7 +35,7 @@ export default function BookDetail() {
   return (
     <CommonPage withBack component={'form'} title="Book Detail">
       <Stack spacing={2}>
-      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Detail Information</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Detail Information</Typography>
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <Box sx={{ width: '100%' }}>
@@ -63,7 +53,7 @@ export default function BookDetail() {
           </Box>
 
           <Box sx={{ width: '100%' }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold'}}>Genre</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Genre</Typography>
             <Typography variant="body1">{book.genre}</Typography>
 
             <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 2 }}>Copies Available</Typography>
@@ -72,7 +62,7 @@ export default function BookDetail() {
             <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 2 }}>Total Copies</Typography>
             <Typography variant="body1">{book.total_copies}</Typography>
           </Box>
-        
+
           {fileItem && fileItem.url && (
             <Box>
               <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Book Cover</Typography>
@@ -80,7 +70,7 @@ export default function BookDetail() {
                 src={fileItem.secure_url}
                 alt="Book Cover"
                 style={{ width: '100%', objectFit: 'cover', marginTop: '2px' }}
-                />
+              />
             </Box>
           )}
         </Stack>

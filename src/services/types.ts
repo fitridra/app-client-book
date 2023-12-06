@@ -22,3 +22,11 @@ export interface IParams {
     totalPages: number;
   }
   
+  export interface IFileItem {
+    url: string;
+    secure_url: string;
+    width?: number;
+    height?: number;
+    resourceType?: string;
+  }
+  
