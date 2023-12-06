@@ -35,31 +35,35 @@ export default function List() {
       return renderLoading();
     }
     return books?.map((record: IBooks) => (
-      <TableRow
-        key={record.id}
-        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-      >
-        <TableCell component="th">{record.title}</TableCell>
-        <TableCell>{record.author}</TableCell>
-        <TableCell>{record.genre}</TableCell>
-        <TableCell>{record.published_year}</TableCell>
-        <TableCell align="right">{record.total_copies}</TableCell>
-        <TableCell>
-          {format(parseISO(record.created_at), 'dd/MM/yyyy HH:mm:ss')}
-        </TableCell>
-        <TableCell>
-          <Link to={`/update/${record.id}`}>
-            <Button variant="outlined">Edit</Button>
+        <TableRow
+          key={record.id}
+          sx={{ '&:last-child td, &:last-child th': { border: 0 },
+          '&:hover': { backgroundColor: '#f5f5f5' } }}
+        >
+          <Link to={`/detail/${record.id}`} style={{ textDecoration: 'none', display: 'contents', width: '100%' }}>
+            <TableCell component="th">{record.title}</TableCell>
+            <TableCell>{record.author}</TableCell>
+            <TableCell>{record.genre}</TableCell>
+            <TableCell>{record.published_year}</TableCell>
+            <TableCell align="right">{record.total_copies}</TableCell>
+            <TableCell>
+              {format(parseISO(record.created_at), 'dd/MM/yyyy HH:mm:ss')}
+            </TableCell>
+            <TableCell>
+              <Link to={`/update/${record.id}`}>
+                <Button variant="outlined">Edit</Button>
+              </Link>
+              <Button
+                style={{ marginLeft: '4px' }}
+                variant="contained"
+                color="error"
+                onClick={() => handleDelete(record.id)}
+              >
+                Delete
+              </Button>
+            </TableCell>
           </Link>
-          <Button style={{ marginLeft: '4px' }}
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete(record.id)}
-          >
-            Delete
-          </Button>
-        </TableCell>
-      </TableRow>
+        </TableRow>
     ));
   };
 
