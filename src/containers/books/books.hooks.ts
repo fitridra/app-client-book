@@ -37,11 +37,6 @@ export default function useAction() {
     fetchBooks();
   }, [params]);
 
-  return {
-    books,
-    params,
-    setParams,
-    loading,
-    meta,
-  };
+  return { books, loading, setParams, params, meta, fetchBooks };
+
 }

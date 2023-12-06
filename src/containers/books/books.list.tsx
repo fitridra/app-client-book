@@ -15,7 +15,7 @@ import {
 import useAction from './books.hooks';
 import { IBooks } from './books.types';
 import { ChangeEvent } from 'react';
-
+import axios from 'axios';
 import CommonPage from '../../components/common-page/common-page';
 import { Link } from 'react-router-dom';
 import { parseISO, format } from 'date-fns';
@@ -28,7 +28,7 @@ const HeaderElementStyled = styled('div')`
 `;
 
 export default function List() {
-  const { books, loading, setParams, params, meta } = useAction();
+  const { books, loading, setParams, params, meta, fetchBooks } = useAction();
 
   const renderContent = () => {
     if (loading) {
@@ -47,13 +47,25 @@ export default function List() {
         <TableCell>
           {format(parseISO(record.created_at), 'dd/MM/yyyy HH:mm:ss')}
         </TableCell>
+        <TableCell>
+          <Link to={`/update/${record.id}`}>
+            <Button variant="outlined">Edit</Button>
+          </Link>
+          <Button style={{ marginLeft: '4px' }}
+            variant="contained"
+            color="error"
+            onClick={() => handleDelete(record.id)}
+          >
+            Delete
+          </Button>
+        </TableCell>
       </TableRow>
     ));
   };
 
   const renderLoading = () => (
     <TableRow>
-      <TableCell colSpan={6} align="center">
+      <TableCell colSpan={7} align="center">
         <CircularProgress />
       </TableCell>
     </TableRow>
@@ -65,6 +77,30 @@ export default function List() {
       ...params,
       search: value,
     });
+  };
+
+  const handleDelete = async (id: string | undefined) => {
+    if (!id) {
+      console.error('Invalid book id');
+      return;
+    }
+
+    try {
+      const confirmation = window.confirm('Are you sure you want to delete this book?');
+      if (!confirmation) {
+        return;
+      }
+
+      await axios.delete(`http://localhost:8000/api/books/${id}`, {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      });
+
+      fetchBooks();
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    }
   };
 
   return (
@@ -98,6 +134,7 @@ export default function List() {
                 Available
               </TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{renderContent()}</TableBody>
