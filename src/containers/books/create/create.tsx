@@ -171,3 +171,5 @@ export default function Create() {
         </Box>
       </Box>
     </CommonPage>
+    );
+  }

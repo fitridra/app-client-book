@@ -4,6 +4,8 @@ import { IBooks } from '../books.types';
 import { IApiResponse, IMeta, IParams } from '../../../services/types';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = 'http://localhost:8000/api/books';
+
 export default function useList() {
   const navigate = useNavigate();
   const [params, setParams] = useState<IParams>({
@@ -27,17 +29,22 @@ export default function useList() {
     record: IBooks
   ) => {
     e.stopPropagation();
-    const confirmed = confirm('Are you sure want to delete?');
+    const confirmed = window.confirm('Are you sure want to delete?');
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:8000/api/books/${record.id}`, {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          return;
+        }
+
+        await axios.delete(`${API_BASE_URL}/${record.id}`, {
           headers: {
-            Authorization: localStorage.getItem('token'),
+            Authorization: token,
           },
         });
         await fetchBooks();
       } catch (error) {
-        console.log('error > ', error);
+        console.error('Error deleting book:', error);
       }
     }
   };
@@ -50,19 +57,16 @@ export default function useList() {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<IApiResponse<IBooks[]>>(
-        'http://localhost:8000/api/books',
-        {
-          params,
-          headers: {
-            Authorization: localStorage.getItem('token'),
-          },
-        }
-      );
+      const response = await axios.get<IApiResponse<IBooks[]>>(API_BASE_URL, {
+        params,
+        headers: {
+          Authorization: localStorage.getItem('token') || '',
+        },
+      });
       setBooks(response.data.data);
       setMeta(response.data.meta);
     } catch (error) {
-      console.log('error > ', error);
+      console.error('Error fetching books:', error);
     } finally {
       setLoading(false);
     }
@@ -83,4 +87,3 @@ export default function useList() {
     handleSearch,
   };
 }
-
